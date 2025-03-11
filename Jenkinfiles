@@ -1,34 +1,41 @@
 pipeline {
     agent any
-    stages [
-        stage ('clone repository') {
+    stages {
+        stage('Clone Repository') {
             steps {
                 checkout([$class: 'GitSCM',
-                branches: [[name: '*/main']],
-                userRemoteConfigs: [[url: 'https://github.com/BhavanaBandi/PES1UG22AM0040_JENKINS.git']]
-            ])
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/BhavanaBandi/PES1UG22AM040_JENKINS.git']]
+                ])
             }
         }
         stage('Build') {
             steps {
-                build 'PES1UG22AM0040-1'
-                sh 'g++ main.cpp -o output'
+                script {
+                    build 'PES1UG22AM040-1'
+                    sh 'g++ main.cpp -o output'
+                }
             }
         }
         stage('Test') {
             steps {
-                sh './output'
+                script {
+                    sh './output'
+                }
             }
         }
         stage('Deploy') {
             steps {
-                echo 'deploy'
+                echo 'Deploying application...'
             }
         }
-    ]
+    }
     post {
         failure {
-            error 'Pipeline failed'
+            script {
+                echo 'Pipeline failed'
+                error 'Stopping pipeline due to failure.'
+            }
         }
     }
 }
